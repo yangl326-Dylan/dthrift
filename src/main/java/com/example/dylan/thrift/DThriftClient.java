@@ -50,7 +50,7 @@ public class DThriftClient {
     /**
      * 构建直连模式client
      *
-     * @param service thrfit service class
+     * @param service thrift service class
      * @param hosts   server hosts列表
      */
     public DThriftClient(Class service, String[] hosts) {
@@ -62,7 +62,7 @@ public class DThriftClient {
     /**
      * 构建zk模式client
      *
-     * @param service       thrfit service class
+     * @param service       thrift service class
      * @param zkConnStr     zookeeper connection str
      * @param zkGroup       服务分组
      * @param zkServiceName 服务名称

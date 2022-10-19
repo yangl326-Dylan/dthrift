@@ -50,13 +50,14 @@ public class DThriftServer {
 
     /**
      * 直连构造器
-     * @param service service class
+     *
+     * @param service      service class
      * @param dBaseService service实现类
      */
     public DThriftServer(Class service, DBaseService dBaseService) {
         this.tProcessor = getTProcess(service, dBaseService);
         this.serverMode = Constants.DEFAULT_MODE;
-        if(serverOptions == null){
+        if (serverOptions == null) {
             serverOptions = new DThriftOptions();
             dBaseService.setDThriftOptions(serverOptions);
         }
@@ -64,10 +65,11 @@ public class DThriftServer {
 
     /**
      * zk模式构造器
-     * @param service service class
+     *
+     * @param service       service class
      * @param dBaseService  service实现类
-     * @param zkConnStr zk连接串
-     * @param zkGroup 组名称
+     * @param zkConnStr     zk连接串
+     * @param zkGroup       组名称
      * @param zkServiceName 服务名
      */
     public DThriftServer(Class service, DBaseService dBaseService, String zkConnStr, String zkGroup, String zkServiceName) {
@@ -76,7 +78,7 @@ public class DThriftServer {
         this.zkConnStr = zkConnStr;
         this.zkServiceName = zkServiceName;
         this.zkGroup = zkGroup;
-        if(serverOptions == null){
+        if (serverOptions == null) {
             serverOptions = new DThriftOptions();
             dBaseService.setDThriftOptions(serverOptions);
         }
@@ -177,6 +179,7 @@ public class DThriftServer {
 
     /**
      * 线程的等待队列数，缺省200
+     *
      * @param acceptQueueSizePerThread
      * @return this
      */
@@ -192,6 +195,7 @@ public class DThriftServer {
 
     /**
      * 设置selector线程数
+     *
      * @param selectorThreads 默认5
      * @return this
      */
@@ -219,15 +223,14 @@ public class DThriftServer {
     /**
      * server启动
      *
-     * @param daemon
      */
-    public void start(boolean daemon) {
+    public void start() {
         if (serverTransport == null) {
             try {
                 serverTransport = new TNonblockingServerSocket(port);
             } catch (TTransportException e) {
                 e.printStackTrace();
-                logger.warn("server init error! on ip={}, port={}",new Object[]{LocalUtil.getLocalIpV4(),port});
+                logger.warn("server init error! on ip={}, port={}", new Object[]{LocalUtil.getLocalIpV4(), port});
             }
         }
         if (tServer == null) {
@@ -244,7 +247,7 @@ public class DThriftServer {
         }
 
         long prepareStartTime = System.currentTimeMillis();
-        new ServerThread(tServer, daemon).start();
+        new ServerThread(tServer).start();
         while (!tServer.isServing()) {
             try {
                 Thread.sleep(500);
@@ -256,7 +259,7 @@ public class DThriftServer {
                 throw new RuntimeException("server start timeout!!");
             }
         }
-        if(serverMode == Constants.ZK_MODE){
+        if (serverMode == Constants.ZK_MODE) {
             //register service
             final ServiceRegister sr = new ServiceRegister(zkConnStr, zkGroup, zkServiceName, zkConnTimeout, zkSessionTimeout, port);
             sr.register(true, 10);
@@ -272,6 +275,10 @@ public class DThriftServer {
      */
     class ServerThread extends Thread {
         private TServer server;
+
+        public ServerThread(TServer server) {
+            this(server, false);
+        }
 
         public ServerThread(TServer server, boolean daemon) {
             this.server = server;
